@@ -16,7 +16,7 @@ import { LoginDto } from './dto/login.dto';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { GoogleAuthDto } from './dto/google-auth.dto';
-import bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +27,7 @@ export class AuthService {
     private emailService: EmailService,
     @InjectDataSource()
     private dataSource: DataSource,
-  ) {}
+  ) { }
 
   async register(registerDto: RegisterDto) {
     const { email, username, password } = registerDto;
