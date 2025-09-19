@@ -81,8 +81,10 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const { email, password, otp, loginMethod } = loginDto;
+    console.log('Auth Service - Login attempt:', { email, loginMethod, hasPassword: !!password });
 
     const user = await this.userService.findByEmail(email);
+    console.log('Auth Service - User found:', user ? { id: user.id, email: user.email, role: user.role } : 'null');
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -101,7 +103,10 @@ export class AuthService {
         );
       }
 
+      console.log('Auth Service - Comparing password for user:', user.email);
+      console.log('Auth Service - Stored password hash:', user.password);
       const isPasswordValid = await bcrypt.compare(password, user.password);
+      console.log('Auth Service - Password valid:', isPasswordValid);
       if (!isPasswordValid) {
         throw new UnauthorizedException('Invalid credentials');
       }

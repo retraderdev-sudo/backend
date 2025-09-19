@@ -19,6 +19,9 @@ import {
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 
@@ -27,7 +30,7 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 @Controller('users')
 @UseGuards(JwtAuthGuard)
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Get('profile')
   @ApiOperation({
@@ -82,6 +85,19 @@ export class UserController {
   }
 
   @Get()
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({
+    summary: 'Get all users (Admin only)',
+    description: 'Retrieve a list of all users. This endpoint is restricted to admin users only.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of users retrieved successfully',
+    type: [User],
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   findAll() {
     return this.userService.findAll();
   }
